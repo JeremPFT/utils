@@ -8,140 +8,144 @@ with Templates_Parser;
 
 package Templates is
 
-  --  Template_Directory : constant String :=
-  --  "d:/Users/jpiffret/AppData/Roaming/Dropbox/projets perso/ada/code_generator/templates_files";
-  --  "/home/jeremy/workspace/ada/code_generator/templates_files/";
+   --  Template_Directory : constant String :=
+   --  "d:/Users/jpiffret/AppData/Roaming/Dropbox/projets perso/ada/code_generator/templates_files";
+   --  "/home/jeremy/workspace/ada/code_generator/templates_files/";
 
-  -----------------------------------------------------------------------------
-  --  types
-  -----------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
+   --  types
+   -----------------------------------------------------------------------------
 
-  type Tag_Names_Array_T is
-    array (Positive range <>)
-    of access constant String;
+   --  type String_Access_T is access all String;
 
-  Tag_Not_Found : exception;
+   type Tag_Names_Array_T is
+     array (Positive range <>)
+     of not null access String;
 
-  No_Tag : constant Tag_Names_Array_T (1 .. 0) := (others => null);
+   Tag_Not_Found : exception;
 
-  function "+" (Item : String) return not null access String
-    is (new String'(Item));
+   No_Tag : constant Tag_Names_Array_T (1 .. 0) := (others => <>);
 
-  type Object_T is tagged private;
+   function "+" (Item : String) return not null access String
+     is (new String'(Item));
 
-  type Reference_T is access all Object_T;
+   type Object_T is tagged private;
 
-  type Class_T is access all Object_T'Class;
+   type Reference_T is access all Object_T;
 
-  -----------------------------------------------------------------------------
-  --  create, clean, initialize
-  -----------------------------------------------------------------------------
+   type Class_T is access all Object_T'Class;
 
-  function Create
-    (Template_Directory_Name : in String;
-     Template_File_Name      : in String;
-     Tag_Names               : in Tag_Names_Array_T := No_Tag)
-    return not null access Object_T
-  with
-    Pre => Template_Directory_Name /= "" and then Template_File_Name /= "";
+   -----------------------------------------------------------------------------
+   --  create, clean, initialize
+   -----------------------------------------------------------------------------
 
-  procedure Free (Object : in out Reference_T);
+   function Create
+     (Template_Directory_Name : in String;
+      Template_File_Name      : in String;
+      Tag_Names               : in Tag_Names_Array_T := No_Tag)
+     return not null access Object_T
+   with
+     Pre => Template_Directory_Name /= "" and then Template_File_Name /= "";
 
-  -----------------------------------------------------------------------------
-  --  queries
-  -----------------------------------------------------------------------------
+   procedure Free (Object : in out Reference_T);
 
-  function Get_Template_Directory_Name
-    (Self : in Object_T)
-    return String;
+   -----------------------------------------------------------------------------
+   --  queries
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function Get_Template_Directory_Name
+     (Self : in Object_T)
+     return String;
 
-  function Get_Template_File_Name
-    (Self : in Object_T)
-    return String;
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function Get_Template_File_Name
+     (Self : in Object_T)
+     return String;
 
-  function Has_Tag
-    (Self     : in Object_T;
-     Tag_Name : in String)
-    return Boolean
-  with Pre => Tag_Name /= "";
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function Has_Tag
+     (Self     : in Object_T;
+      Tag_Name : in String)
+     return Boolean
+   with Pre => Tag_Name /= "";
 
-  function Get_Value
-    (Self     : in Object_T;
-     Tag_Name : in String;
-     Index    : in Positive)
-    return String
-  with Pre => Self.Has_Tag (Tag_Name);
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function Get_Value
+     (Self     : in Object_T;
+      Tag_Name : in String;
+      Index    : in Positive)
+     return String
+   with Pre => Self.Has_Tag (Tag_Name);
 
-  function Number_Of_Elements_In_Tag
-    (Self     : in Object_T;
-     Tag_Name : in String)
-    return Natural;
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function Number_Of_Elements_In_Tag
+     (Self     : in Object_T;
+      Tag_Name : in String)
+     return Natural;
 
-  function File_Exists
-    (Self : in Object_T'Class)
-    return Boolean;
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   function File_Exists
+     (Self : in Object_T'Class)
+     return Boolean;
 
-  function To_String
-    (Self : in Object_T)
-    return String
-    with Pre => File_Exists (Self);
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
-  --  commands
-  -----------------------------------------------------------------------------
+   function To_String
+     (Self : in Object_T)
+     return String
+   with Pre => File_Exists (Self);
 
-  procedure Add_Value
-    (Self     : in out Object_T;
-     Tag_Name : in     String;
-     Value    : in     String)
-  with Pre => Self.Has_Tag (Tag_Name);
+   -----------------------------------------------------------------------------
+   --  commands
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   procedure Add_Value
+     (Self     : in out Object_T;
+      Tag_Name : in     String;
+      Value    : in     String)
+   with Pre => Self.Has_Tag (Tag_Name);
 
-  procedure Add_Value
-    (Self     : in out Object_T;
-     Tag_Name : in     String;
-     Value    : in     Integer)
-  with Pre => Self.Has_Tag (Tag_Name);
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   procedure Add_Value
+     (Self     : in out Object_T;
+      Tag_Name : in     String;
+      Value    : in     Integer)
+   with Pre => Self.Has_Tag (Tag_Name);
 
-  procedure Add_Value
-    (Self     : in out Object_T;
-     Tag_Name : in     String;
-     Value    : in     Boolean)
-  with Pre => Self.Has_Tag (Tag_Name);
+   -----------------------------------------------------------------------------
 
-  -----------------------------------------------------------------------------
+   procedure Add_Value
+     (Self     : in out Object_T;
+      Tag_Name : in     String;
+      Value    : in     Boolean)
+   with Pre => Self.Has_Tag (Tag_Name);
+
+   -----------------------------------------------------------------------------
 
 private
 
-  -----------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-  package Tp renames Templates_Parser;
+   package Tp renames Templates_Parser;
 
-  type Tag_Array_T is array (Positive range <>) of Tp.Tag;
+   type String_Access_T is access all String;
 
-  type Object_T is tagged record
-    Template_Directory_Name : access String             := null;
-    Template_File_Name      : access String             := null;
-    Tag_Names               : access Tag_Names_Array_T  := null;
-    Tags                    : access Tag_Array_T        := null;
-    Translate_Table         : access Tp.Translate_Table := null;
-  end record;
+   type Tag_Array_T is array (Positive range <>) of Tp.Tag;
 
-  -----------------------------------------------------------------------------
+   type Object_T is tagged record
+      Template_Directory_Name : String_Access_T           := null;
+      Template_File_Name      : String_Access_T           := null;
+      Tag_Names               : access Tag_Names_Array_T  := null;
+      Tags                    : access Tag_Array_T        := null;
+      Translate_Table         : access Tp.Translate_Table := null;
+   end record;
+
+   -----------------------------------------------------------------------------
 
 end Templates;

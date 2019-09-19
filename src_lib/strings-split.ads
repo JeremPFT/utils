@@ -1,6 +1,6 @@
-with String_Vectors;
+with String.Vectors;
 
-function Split
+function Strings.Split
   (Source    : in String;
    Separator : in String)
-  return String_Vectors.Vector;
+  return String.Vectors.Vector;
